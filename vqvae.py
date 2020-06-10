@@ -1,3 +1,7 @@
+"""
+Written by Roger Trullo <rogertrullo@gmail.com> 2020
+"""
+
 import torch.nn as nn
 import torch
 from blocks import *
