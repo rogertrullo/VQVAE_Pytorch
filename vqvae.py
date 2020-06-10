@@ -62,3 +62,23 @@ class VQVAE(nn.Module):
         out = self.decoder(zq)
 
         return out
+
+    def compute_gradients(self, x):
+        out, l_emb, l_commit = self.forward(x)
+
+        #####updates encoder and decoder params###
+        L_likelihood = ((x - out) ** 2).mean()
+        L_likelihood.backward()
+
+        # copy gradients from zq to ze
+        self.ze.backward(self.zq.grad, retain_graph=True)
+        #################################
+
+        ####updates only encoder using embeddings####
+        l_emb.backward()
+        ##########################
+
+        #####updates only the embeddings####
+        l_commit.backward()
+        ###################################
+        return L_likelihood + l_emb + l_commit, out
